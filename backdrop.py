@@ -39,8 +39,7 @@ class Backdrop:
 
     def is_valid_mosaic_tile(self, row, col):
         self.check_in_bounds(row, col)
-        if not self.__backdrop[row][col].identity() or self.__backdrop[row][col].identity() == "white":
-            return False
+        return self.__backdrop[row][col].identity() is not None and self.__backdrop[row][col].identity() != "white"
 
     def score_backdrop(self):
         score = 0
@@ -65,8 +64,6 @@ class Backdrop:
                 # There are only 2 types of mosaics: 3 of the same color OR 3 different colors
 
                 if row % 2 == 0:
-                    if col == 0 or col == 5:
-                        continue  # Cannot have a mosaic beneath it b/c board is beneath it
                     if (self.is_valid_mosaic_tile(row, col) and self.is_valid_mosaic_tile(row - 1, col)
                             and self.is_valid_mosaic_tile(row - 1, col + 1)):
                         # Now to check if the mosaic is 3 of the same color or 3 different colors
@@ -81,30 +78,33 @@ class Backdrop:
                     if col == 0 or col == 6:
                         continue
                     if (self.is_valid_mosaic_tile(row, col) and self.is_valid_mosaic_tile(row - 1, col)
-                            and self.is_valid_mosaic_tile(row - 1, col + 1)):
+                            and self.is_valid_mosaic_tile(row - 1, col - 1)):
                         tile_a = self.get_tile(row, col).identity()
                         tile_b = self.get_tile(row - 1, col).identity()
                         tile_c = self.get_tile(row - 1, col + 1).identity()
+
                     else:
                         continue
 
                 if not (tile_a == tile_b == tile_c or tile_a != tile_b != tile_c != tile_a):
                     continue
 
-
                 # The mosaic might be valid, but we need to check if the borders are all white!
-                acceptable_edges = ["white", None]
+                acceptable_edges = ["white", "board", None]
                 border_identites = [
                     self.get_tile(row, col + 1).identity() in acceptable_edges,
                     self.get_tile(row - 1, col + 2).identity() in acceptable_edges,
                     self.get_tile(row - 2, col + 1).identity() in acceptable_edges,
+
                     self.get_tile(row - 2, col).identity() in acceptable_edges,
                     self.get_tile(row - 2, col - 1).identity() in acceptable_edges,
-                    self.get_tile(row - 1, col - 1).identity() in acceptable_edges,
+                    self.get_tile(row - 1, col - 2).identity() in acceptable_edges,
+
                     self.get_tile(row, col - 1).identity() in acceptable_edges,
                     self.get_tile(row + 1, col).identity() in acceptable_edges,
                     self.get_tile(row + 1, col + 1).identity() in acceptable_edges,
                 ]
+
                 if not (False in border_identites):
                     # Edges are good = proper mosaic
                     print(f"Mosaic found at ({row}, {col})!")
