@@ -193,6 +193,27 @@ class Backdrop:
     def get_legal_moves(self):
         return self.__legal_moves
 
+    def get_state(self):
+        state = []
+        color_to_id = {
+            "white": 0,
+            "yellow": 1,
+            "purple": 2,
+            "green": 3,
+        }
+
+        for row in range(12):
+            for col in range(6 if row % 2 == 0 else 7):
+                tile = self.get_tile(row, col)
+                if tile.identity() is not None:
+                    tile_id = color_to_id.get(tile.identity(), -1)  # Assign a unique ID to each color
+                    state.append(tile_id)
+                else:
+                    # Handle the case where tile.identity() is None (e.g., empty tiles)
+                    state.append(-1)  # You can use -1 to represent empty tiles
+
+        return state
+
     def __str__(self):
         ret_str = "#" * 13 + "\n"
         # returns the backdrop in a nice format in text UI, given the 6/7 width alternating rows
@@ -206,10 +227,18 @@ class Backdrop:
         ret_str += "#" * 13
         return ret_str
 
-    def get_placed_tiles(self):
+    def get_num_placed_tiles(self):
         placed_tiles = 0
         for row in range(12):
             for col in range(6 if row % 2 == 0 else 7):
                 if self.get_tile(row, col).identity() is not None:
                     placed_tiles += 1
+        return placed_tiles
+
+    def get_placed_tiles(self):
+        placed_tiles = []
+        for row in range(12):
+            for col in range(6 if row % 2 == 0 else 7):
+                if self.get_tile(row, col).identity() is not None:
+                    placed_tiles.append(self.get_tile(row, col))
         return placed_tiles

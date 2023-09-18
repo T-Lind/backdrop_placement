@@ -2,16 +2,16 @@ import copy
 import random
 from backdrop import Tile, Backdrop
 
-white_tiles = 4
-green_tiles = 1
-purple_tiles = 1
-yellow_tiles = 1
+white_tiles = 15
+green_tiles = 5
+purple_tiles = 5
+yellow_tiles = 5
 
 all_tiles = [Tile("white") for _ in range(white_tiles)] + [Tile("green") for _ in range(green_tiles)] + [Tile("purple")
                                                                                                          for _ in range(
         purple_tiles)] + [Tile("yellow") for _ in range(yellow_tiles)]
 
-random_items = random.sample(all_tiles, white_tiles+green_tiles+purple_tiles+yellow_tiles)
+random_items = random.sample(all_tiles, white_tiles + green_tiles + purple_tiles + yellow_tiles)
 print([random_items[i].identity() for i in range(0, len(random_items))])
 
 
@@ -39,6 +39,7 @@ def breadth_first_search(initial_state, tiles_to_place):
 
     return best_sequence
 
+
 # Create your initial backdrop object
 initial_backdrop = Backdrop()  # Replace with actual initialization
 
@@ -47,8 +48,7 @@ best_sequence = breadth_first_search(initial_backdrop, random_items)
 
 # Apply the best sequence of moves
 for move in best_sequence:
-    initial_backdrop.set_tile(move[0], move[1], random_items[initial_backdrop.get_placed_tiles()])
+    initial_backdrop.set_tile(move[0], move[1], random_items[initial_backdrop.get_num_placed_tiles()])
 print(initial_backdrop)
 print("Best Sequence:", best_sequence)
 print("Best Score:", initial_backdrop.calculate_score())
-
