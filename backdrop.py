@@ -41,7 +41,7 @@ class Backdrop:
         self.check_in_bounds(row, col)
         return self.__backdrop[row][col].identity() is not None and self.__backdrop[row][col].identity() != "white"
 
-    def score_backdrop(self):
+    def calculate_score(self, verbose=False):
         score = 0
         height_bonuses = [False, False, False]
         for row in range(12):
@@ -107,9 +107,10 @@ class Backdrop:
 
                 if not (False in border_identites):
                     # Edges are good = proper mosaic
-                    print(f"Mosaic found at ({row}, {col})!")
+                    if verbose:
+                        print(f"Mosaic found at ({row}, {col})!")
                     score += 10
-                if self.__backdrop[row][col].identity() == self.__backdrop[row][col + 1].identity() == \
+                if self.__backdrop[row][col].identity() == self.get_tile(row, col + 1).identity() == \
                         self.__backdrop[row + 1][col].identity():
                     score += 10
 
@@ -175,8 +176,11 @@ class Backdrop:
         return False
 
     def get_tile(self, row, col):
-        self.check_in_bounds(row, col)
-        return self.__backdrop[row][col]
+        # self.check_in_bounds(row, col)
+        try:
+            return self.__backdrop[row][col]
+        except:
+            return Tile(None)
 
     def generate_legal_moves(self):
         self.__legal_moves.clear()
@@ -184,6 +188,7 @@ class Backdrop:
             for col in range(6 if row % 2 == 0 else 7):
                 if self.is_legal_move(row, col):
                     self.__legal_moves.append((row, col))
+        return self.__legal_moves
 
     def get_legal_moves(self):
         return self.__legal_moves
@@ -200,3 +205,11 @@ class Backdrop:
                     f"{self.__backdrop[n][0]} {self.__backdrop[n][1]} {self.__backdrop[n][2]} {self.__backdrop[n][3]} {self.__backdrop[n][4]} {self.__backdrop[n][5]} {self.__backdrop[n][6]}\n")
         ret_str += "#" * 13
         return ret_str
+
+    def get_placed_tiles(self):
+        placed_tiles = 0
+        for row in range(12):
+            for col in range(6 if row % 2 == 0 else 7):
+                if self.get_tile(row, col).identity() is not None:
+                    placed_tiles += 1
+        return placed_tiles
