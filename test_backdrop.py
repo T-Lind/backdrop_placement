@@ -1,0 +1,15 @@
+from backdrop import Backdrop, Tile
+
+bdrop = Backdrop()
+print(bdrop.set_tile(0, 0, Tile("yellow")))
+print(bdrop.set_tile(0, 1, Tile("purple")))
+print(bdrop.set_tile(1, 1, Tile("green")))
+print(bdrop.set_tile(1, 0, Tile("white")))
+# print(bdrop.set_tile(2, 0, Tile("white")))
+print(bdrop.set_tile(0, 2, Tile("white")))
+print(bdrop.set_tile(1, 2, Tile("white")))
+# print(bdrop.set_tile(2, 1, Tile("white")))
+print(bdrop)
+bdrop.generate_legal_moves()
+print(bdrop.get_legal_moves())
+print(bdrop.score_backdrop())
