@@ -28,6 +28,8 @@ def breadth_first_search(initial_state, tiles_to_place):
             if current_score > best_score:
                 best_score = current_score
                 best_sequence = current_sequence
+                print("New Best Score for the following:", best_score)
+                print(current_state)
         else:
             # Generate all possible moves for the next tile
             legal_moves = current_state.generate_legal_moves()
