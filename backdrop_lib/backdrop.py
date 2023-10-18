@@ -215,7 +215,7 @@ class Backdrop:
         return state
 
     def __str__(self):
-        ret_str = "#" * 13 + "\n"
+        ret_str = "#" * 15 + "\n"
         # returns the backdrop in a nice format in text UI, given the 6/7 width alternating rows
         for n in range(len(self.__backdrop) - 1, -1, -1):
             if n % 2 == 0:
@@ -224,7 +224,7 @@ class Backdrop:
             else:
                 ret_str += (
                     f"{self.__backdrop[n][0]} {self.__backdrop[n][1]} {self.__backdrop[n][2]} {self.__backdrop[n][3]} {self.__backdrop[n][4]} {self.__backdrop[n][5]} {self.__backdrop[n][6]}\n")
-        ret_str += "#" * 13
+        ret_str += "#" * 14
         return ret_str
 
     def get_num_placed_tiles(self):

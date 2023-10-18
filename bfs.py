@@ -1,6 +1,6 @@
 import copy
 import random
-from backdrop import Tile, Backdrop
+from backdrop_lib.backdrop import Tile, Backdrop
 
 white_tiles = 15
 green_tiles = 5

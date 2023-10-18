@@ -1,4 +1,4 @@
-from backdrop import Backdrop, Tile
+from backdrop_lib.backdrop import Backdrop, Tile
 
 if __name__ == "__main__":
     bdrop = Backdrop()
