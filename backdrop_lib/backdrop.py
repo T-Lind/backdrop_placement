@@ -1,4 +1,4 @@
-class Tile:
+class Pixel:
     def __init__(self, color: str = None):
         self.__identity = color
 
@@ -19,11 +19,11 @@ class Tile:
 
 class Backdrop:
     def __init__(self):
-        self.__backdrop: list[list[Tile]] = []
+        self.__backdrop: list[list[Pixel]] = []
         for row in range(12):
             self.__backdrop.append([])
             for col in range(6 if row % 2 == 0 else 7):
-                self.__backdrop[row].append(Tile(None))
+                self.__backdrop[row].append(Pixel(None))
 
         self.__legal_moves = []  # Starting row's legal moves
 
@@ -37,7 +37,7 @@ class Backdrop:
         if row % 2 == 1 and col > 6:
             raise ValueError("Column must be between 0 and 6 for odd rows")
 
-    def is_valid_mosaic_tile(self, row, col):
+    def is_valid_mosaic_pixel(self, row, col):
         self.check_in_bounds(row, col)
         return self.__backdrop[row][col].identity() is not None and self.__backdrop[row][col].identity() != "white"
 
@@ -49,7 +49,7 @@ class Backdrop:
                 if not self.__backdrop[row][col].identity():
                     continue
 
-                score += 5  # 5 Points for scoring a pixel (tile)
+                score += 5  # 5 Points for scoring a pixel (pixel)
 
                 # Add in height bonus checks here
                 if row >= 2:
@@ -60,49 +60,49 @@ class Backdrop:
                     height_bonuses[2] = True
 
                 # Now time for the hard part. Checking for mosaics.
-                # So mosics are 3 hexagon tiles, in a triangle-ish shape, all adjacent to each other.
+                # So mosics are 3 hexagon pixels, in a triangle-ish shape, all adjacent to each other.
                 # There are only 2 types of mosaics: 3 of the same color OR 3 different colors
 
                 if row % 2 == 0:
-                    if (self.is_valid_mosaic_tile(row, col) and self.is_valid_mosaic_tile(row - 1, col)
-                            and self.is_valid_mosaic_tile(row - 1, col + 1)):
+                    if (self.is_valid_mosaic_pixel(row, col) and self.is_valid_mosaic_pixel(row - 1, col)
+                            and self.is_valid_mosaic_pixel(row - 1, col + 1)):
                         # Now to check if the mosaic is 3 of the same color or 3 different colors
-                        tile_a = self.get_tile(row, col).identity()
-                        tile_b = self.get_tile(row - 1, col).identity()
-                        tile_c = self.get_tile(row - 1, col + 1).identity()
+                        pixel_a = self.get_pixel(row, col).identity()
+                        pixel_b = self.get_pixel(row - 1, col).identity()
+                        pixel_c = self.get_pixel(row - 1, col + 1).identity()
                     else:
-                        # Not valid tiles so won't even bother
+                        # Not valid pixels so won't even bother
                         continue
 
                 else:
                     if col == 0 or col == 6:
                         continue
-                    if (self.is_valid_mosaic_tile(row, col) and self.is_valid_mosaic_tile(row - 1, col)
-                            and self.is_valid_mosaic_tile(row - 1, col - 1)):
-                        tile_a = self.get_tile(row, col).identity()
-                        tile_b = self.get_tile(row - 1, col).identity()
-                        tile_c = self.get_tile(row - 1, col + 1).identity()
+                    if (self.is_valid_mosaic_pixel(row, col) and self.is_valid_mosaic_pixel(row - 1, col)
+                            and self.is_valid_mosaic_pixel(row - 1, col - 1)):
+                        pixel_a = self.get_pixel(row, col).identity()
+                        pixel_b = self.get_pixel(row - 1, col).identity()
+                        pixel_c = self.get_pixel(row - 1, col + 1).identity()
 
                     else:
                         continue
 
-                if not (tile_a == tile_b == tile_c or tile_a != tile_b != tile_c != tile_a):
+                if not (pixel_a == pixel_b == pixel_c or pixel_a != pixel_b != pixel_c != pixel_a):
                     continue
 
                 # The mosaic might be valid, but we need to check if the borders are all white!
                 acceptable_edges = ["white", "board", None]
                 border_identites = [
-                    self.get_tile(row, col + 1).identity() in acceptable_edges,
-                    self.get_tile(row - 1, col + 2).identity() in acceptable_edges,
-                    self.get_tile(row - 2, col + 1).identity() in acceptable_edges,
+                    self.get_pixel(row, col + 1).identity() in acceptable_edges,
+                    self.get_pixel(row - 1, col + 2).identity() in acceptable_edges,
+                    self.get_pixel(row - 2, col + 1).identity() in acceptable_edges,
 
-                    self.get_tile(row - 2, col).identity() in acceptable_edges,
-                    self.get_tile(row - 2, col - 1).identity() in acceptable_edges,
-                    self.get_tile(row - 1, col - 2).identity() in acceptable_edges,
+                    self.get_pixel(row - 2, col).identity() in acceptable_edges,
+                    self.get_pixel(row - 2, col - 1).identity() in acceptable_edges,
+                    self.get_pixel(row - 1, col - 2).identity() in acceptable_edges,
 
-                    self.get_tile(row, col - 1).identity() in acceptable_edges,
-                    self.get_tile(row + 1, col).identity() in acceptable_edges,
-                    self.get_tile(row + 1, col + 1).identity() in acceptable_edges,
+                    self.get_pixel(row, col - 1).identity() in acceptable_edges,
+                    self.get_pixel(row + 1, col).identity() in acceptable_edges,
+                    self.get_pixel(row + 1, col + 1).identity() in acceptable_edges,
                 ]
 
                 if not (False in border_identites):
@@ -110,7 +110,7 @@ class Backdrop:
                     if verbose:
                         print(f"Mosaic found at ({row}, {col})!")
                     score += 10
-                if self.__backdrop[row][col].identity() == self.get_tile(row, col + 1).identity() == \
+                if self.__backdrop[row][col].identity() == self.get_pixel(row, col + 1).identity() == \
                         self.__backdrop[row + 1][col].identity():
                     score += 10
 
@@ -120,37 +120,37 @@ class Backdrop:
 
         return score
 
-    def get_tile(self, row, col) -> Tile:
+    def get_pixel(self, row, col) -> Pixel:
         # Same as using indices but returns none if out of bounds
         if row < 0 or row > 11:
-            return Tile(None)
+            return Pixel(None)
         if row % 2 == 0 and col < 0 or col > 5:
-            return Tile(None)
+            return Pixel(None)
         if row % 2 == 1 and col < 0 or col > 6:
-            return Tile(None)
+            return Pixel(None)
         return self.__backdrop[row][col]
 
     def is_legal_move(self, row, col):
         self.check_in_bounds(row, col)
 
-        # Check if the tile is already occupied
+        # Check if the pixel is already occupied
         if self.__backdrop[row][col].identity():
             return False
 
-        # Check there's two tiles below
+        # Check there's two pixels below
         if row % 2 != 0:  # Odd row
-            tile_left = self.__backdrop[row - 1][col - 1] if col > 0 else Tile("board")
-            tile_right = self.__backdrop[row - 1][col] if col < 6 else Tile("board")
+            pixel_left = self.__backdrop[row - 1][col - 1] if col > 0 else Pixel("board")
+            pixel_right = self.__backdrop[row - 1][col] if col < 6 else Pixel("board")
 
-            if not (tile_left.identity() and tile_right.identity()):
+            if not (pixel_left.identity() and pixel_right.identity()):
                 return False
         else:  # Even row (starts at 0)
             if row != 0:  # Row at 0 will always be supported
                 # These never will be partially on top of the backdrop
-                tile_left = self.__backdrop[row - 1][col]
-                tile_right = self.__backdrop[row - 1][col + 1]
+                pixel_left = self.__backdrop[row - 1][col]
+                pixel_right = self.__backdrop[row - 1][col + 1]
 
-                if not (tile_left.identity() and tile_right.identity()):
+                if not (pixel_left.identity() and pixel_right.identity()):
                     return False
 
         # Check to make sure there's an opening above
@@ -161,26 +161,26 @@ class Backdrop:
                 if not self.__backdrop[row + 1][col].identity() and not self.__backdrop[row + 1][col + 1].identity():
                     return True
             else:
-                # The edge is being represented as Nones because I think it's possible to squeeze in a tile on the edge
-                left_above = self.__backdrop[row + 1][col - 1] if col > 0 else Tile(None)
-                right_above = self.__backdrop[row + 1][col] if col < 6 else Tile(None)
+                # The edge is being represented as Nones because I think it's possible to squeeze in a pixel on the edge
+                left_above = self.__backdrop[row + 1][col - 1] if col > 0 else Pixel(None)
+                right_above = self.__backdrop[row + 1][col] if col < 6 else Pixel(None)
 
                 if not left_above.identity() and not right_above.identity():
                     return True
         return False
 
-    def set_tile(self, row, col, tile: Tile):
+    def set_pixel(self, row, col, pixel: Pixel):
         if self.is_legal_move(row, col):
-            self.__backdrop[row][col] = tile
+            self.__backdrop[row][col] = pixel
             return True
         return False
 
-    def get_tile(self, row, col):
+    def get_pixel(self, row, col):
         # self.check_in_bounds(row, col)
         try:
             return self.__backdrop[row][col]
         except:
-            return Tile(None)
+            return Pixel(None)
 
     def generate_legal_moves(self):
         self.__legal_moves.clear()
@@ -204,13 +204,13 @@ class Backdrop:
 
         for row in range(12):
             for col in range(6 if row % 2 == 0 else 7):
-                tile = self.get_tile(row, col)
-                if tile.identity() is not None:
-                    tile_id = color_to_id.get(tile.identity(), -1)  # Assign a unique ID to each color
-                    state.append(tile_id)
+                pixel = self.get_pixel(row, col)
+                if pixel.identity() is not None:
+                    pixel_id = color_to_id.get(pixel.identity(), -1)  # Assign a unique ID to each color
+                    state.append(pixel_id)
                 else:
-                    # Handle the case where tile.identity() is None (e.g., empty tiles)
-                    state.append(-1)  # You can use -1 to represent empty tiles
+                    # Handle the case where pixel.identity() is None (e.g., empty pixels)
+                    state.append(-1)  # You can use -1 to represent empty pixels
 
         return state
 
@@ -227,18 +227,18 @@ class Backdrop:
         ret_str += "#" * 14
         return ret_str
 
-    def get_num_placed_tiles(self):
-        placed_tiles = 0
+    def get_num_placed_pixels(self):
+        placed_pixels = 0
         for row in range(12):
             for col in range(6 if row % 2 == 0 else 7):
-                if self.get_tile(row, col).identity() is not None:
-                    placed_tiles += 1
-        return placed_tiles
+                if self.get_pixel(row, col).identity() is not None:
+                    placed_pixels += 1
+        return placed_pixels
 
-    def get_placed_tiles(self):
-        placed_tiles = []
+    def get_placed_pixels(self):
+        placed_pixels = []
         for row in range(12):
             for col in range(6 if row % 2 == 0 else 7):
-                if self.get_tile(row, col).identity() is not None:
-                    placed_tiles.append(self.get_tile(row, col))
-        return placed_tiles
+                if self.get_pixel(row, col).identity() is not None:
+                    placed_pixels.append(self.get_pixel(row, col))
+        return placed_pixels

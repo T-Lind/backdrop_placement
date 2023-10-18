@@ -1,1 +1,1 @@
-from backdrop_lib.backdrop import Tile, Backdrop
+from backdrop_lib.backdrop import Pixel, Backdrop
